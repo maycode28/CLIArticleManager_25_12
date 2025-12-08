@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -15,6 +16,7 @@ public class Main {
 
         makeTestData();
 
+        HashMap<String, String> members = new HashMap<>();
         while (true) {
             System.out.print("명령어 ) ");
             String cmd = sc.nextLine().trim();
@@ -63,32 +65,7 @@ public class Main {
                         System.out.println("해당하는 글 없음");
                     }
                 }
-            }
-//            else if (cmd.startsWith("article search")) {
-//                System.out.println("==게시글 목록==");
-//                if (articles.size() == 0) {
-//                    System.out.println("아무것도 없음");
-//                } else {
-//                    System.out.println("   번호  /       날짜       /       제목     /   내용  ");
-//                    boolean exists = false;
-//                    for (int i = articles.size() - 1; i >= 0; i--) {
-//                        Article article = articles.get(i);
-//                        if (article.getTitle().contains(cmd.split(" ")[2])) {
-//                            exists = true;
-//                            if (Util.getNowStr().split(" ")[0].equals(article.getRegDate().split(" ")[0])) {
-//                                System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[1], article.getTitle(), article.getBody());
-//                            } else {
-//                                System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[0], article.getTitle(), article.getBody());
-//                            }
-//                        }
-//
-//                    }
-//                    if (!exists) {
-//                        System.out.println("해당하는 글 없음");
-//                    }
-//                }
-//            }
-            else if (cmd.startsWith("article detail")) {
+            } else if (cmd.startsWith("article detail")) {
                 System.out.println("==게시글 상세보기==");
 
                 int id = Integer.parseInt(cmd.split(" ")[2]);
@@ -163,6 +140,33 @@ public class Main {
                 foundArticle.setUpdateDate(Util.getNowStr());
 
                 System.out.println(id + "번 게시글이 수정되었습니다");
+            }else if (cmd.equals("member join")) {
+                String ID = "";
+                String PW = "";
+                while(true){
+                    System.out.print("ID : ");
+                    ID = sc.nextLine().trim();
+                    if (members.containsKey(ID)) {
+                        System.out.println("사용할 수 없는 아이디 입니다.");
+                    } else {
+                        System.out.println("사용할 수 있는 아이디 입니다.");
+                        break;
+                    }
+                }
+                while (true){
+                    System.out.print("PW : ");
+                    PW = sc.nextLine().trim();
+                    System.out.print("PW 확인 : ");
+                    String PWCheck = sc.nextLine().trim();
+                    if (!PWCheck.equals(PW)) {
+                        System.out.println("패스워드가 서로 다릅니다.");
+                        continue;
+                    }
+                    break;
+                }
+                System.out.println("가입되었습니다.");
+                members.put(ID, PW);
+
             } else {
                 System.out.println("사용할 수 없는 명령어입니다");
             }
