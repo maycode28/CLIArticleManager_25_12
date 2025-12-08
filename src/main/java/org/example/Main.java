@@ -3,8 +3,6 @@ package org.example;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class Main {
     static int lastArticleId = 0;
@@ -15,9 +13,8 @@ public class Main {
 
         System.out.println("==프로그램 시작==");
 
-
-
         makeTestData();
+
         while (true) {
             System.out.print("명령어 ) ");
             String cmd = sc.nextLine().trim();
@@ -36,8 +33,10 @@ public class Main {
                 String title = sc.nextLine().trim();
                 System.out.print("내용 : ");
                 String body = sc.nextLine().trim();
+                String regDate = Util.getNowStr();
+                String updateDate = Util.getNowStr();
 
-                Article article = new Article(id, title, body);
+                Article article = new Article(id, regDate, updateDate, title, body);
                 articles.add(article);
 
                 System.out.println(id + "번 글이 작성되었습니다.");
@@ -47,13 +46,41 @@ public class Main {
                 if (articles.size() == 0) {
                     System.out.println("아무것도 없음");
                 } else {
-                    System.out.println("   번호  /     제목     /   내용  ");
+                    System.out.println("   번호  /       날짜       /       제목     /   내용  ");
                     for (int i = articles.size() - 1; i >= 0; i--) {
                         Article article = articles.get(i);
-                        System.out.printf("   %d    /    %s     /     %s   \n", article.getId(), article.getTitle(), article.getBody());
+                        if (Util.getNowStr().split(" ")[0].equals(article.getRegDate().split(" ")[0])) {
+                            System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[1], article.getTitle(), article.getBody());
+                        } else {
+                            System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[0], article.getTitle(), article.getBody());
+                        }
+
                     }
                 }
-            } else if (cmd.startsWith("article detail")) {
+            } else if (cmd.startsWith("article search")) {
+                System.out.println("==게시글 목록==");
+                if (articles.size() == 0) {
+                    System.out.println("아무것도 없음");
+                } else {
+                    System.out.println("   번호  /       날짜       /       제목     /   내용  ");
+                    boolean exists = false;
+                    for (int i = articles.size() - 1; i >= 0; i--) {
+                        Article article = articles.get(i);
+                        if (article.getTitle().contains(cmd.split(" ")[2])) {
+                            exists = true;
+                            if (Util.getNowStr().split(" ")[0].equals(article.getRegDate().split(" ")[0])) {
+                                System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[1], article.getTitle(), article.getBody());
+                            } else {
+                                System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[0], article.getTitle(), article.getBody());
+                            }
+                        }
+
+                    }
+                    if (!exists) {
+                        System.out.println("해당하는 글 없음");
+                    }
+                }
+            }else if (cmd.startsWith("article detail")) {
                 System.out.println("==게시글 상세보기==");
 
                 int id = Integer.parseInt(cmd.split(" ")[2]);
@@ -72,7 +99,8 @@ public class Main {
                     continue;
                 }
                 System.out.println("번호 : " + foundArticle.getId());
-                System.out.println("날짜 : " + foundArticle.getDatetime());
+                System.out.println("작성날짜 : " + foundArticle.getRegDate());
+                System.out.println("수정날짜 : " + foundArticle.getUpdateDate());
                 System.out.println("제목 : " + foundArticle.getTitle());
                 System.out.println("내용 : " + foundArticle.getBody());
 
@@ -123,6 +151,9 @@ public class Main {
 
                 foundArticle.setTitle(newTitle);
                 foundArticle.setBody(newBody);
+
+                foundArticle.setUpdateDate(Util.getNowStr());
+
                 System.out.println(id + "번 게시글이 수정되었습니다");
             } else {
                 System.out.println("사용할 수 없는 명령어입니다");
@@ -131,26 +162,55 @@ public class Main {
         System.out.println("==프로그램 끝==");
         sc.close();
     }
+
     static void makeTestData() {
         for (int i = 1; i <= 3; i++) {
             int id = ++lastArticleId;
-            String title = "Test"+id;
-            String body = "TestTest"+id;
-            Article article = new Article(id, title, body);
+            String title = "Test" + id;
+            String body = "TestTest" + id;
+            String regDate = Util.getNowStr();
+            String updateDate = Util.getNowStr();
+            Article article = new Article(id, regDate, updateDate, title, body);
             articles.add(article);
         }
+
 
     }
 }
 
 class Article {
     private int id;
+    private String regDate;
+    private String updateDate;
     private String title;
     private String body;
-    private String datetime;
+
+    public Article(int id, String regDate, String updateDate, String title, String body) {
+        this.id = id;
+        this.regDate = regDate;
+        this.updateDate = updateDate;
+        this.title = title;
+        this.body = body;
+    }
 
     public int getId() {
         return id;
+    }
+
+    public String getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(String updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public String getRegDate() {
+        return regDate;
+    }
+
+    public void setRegDate(String regDate) {
+        this.regDate = regDate;
     }
 
     public void setId(int id) {
@@ -173,17 +233,5 @@ class Article {
         this.body = body;
     }
 
-    public String getDatetime() {
-        return datetime;
-    }
-    public void setDatetime(String datetime) {
-        this.datetime = datetime;
-    }
 
-    public Article(int id, String title, String body) {
-        this.id = id;
-        this.title = title;
-        this.body = body;
-        this.datetime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    }
 }
