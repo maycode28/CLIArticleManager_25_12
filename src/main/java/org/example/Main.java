@@ -41,23 +41,7 @@ public class Main {
 
                 System.out.println(id + "번 글이 작성되었습니다.");
                 lastArticleId++;
-            } else if (cmd.equals("article list")) {
-                System.out.println("==게시글 목록==");
-                if (articles.size() == 0) {
-                    System.out.println("아무것도 없음");
-                } else {
-                    System.out.println("   번호  /       날짜       /       제목     /   내용  ");
-                    for (int i = articles.size() - 1; i >= 0; i--) {
-                        Article article = articles.get(i);
-                        if (Util.getNowStr().split(" ")[0].equals(article.getRegDate().split(" ")[0])) {
-                            System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[1], article.getTitle(), article.getBody());
-                        } else {
-                            System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[0], article.getTitle(), article.getBody());
-                        }
-
-                    }
-                }
-            } else if (cmd.startsWith("article search")) {
+            } else if (cmd.startsWith("article list")) {
                 System.out.println("==게시글 목록==");
                 if (articles.size() == 0) {
                     System.out.println("아무것도 없음");
@@ -66,7 +50,7 @@ public class Main {
                     boolean exists = false;
                     for (int i = articles.size() - 1; i >= 0; i--) {
                         Article article = articles.get(i);
-                        if (article.getTitle().contains(cmd.split(" ")[2])) {
+                        if (cmd.split(" ").length==2 || article.getTitle().contains(cmd.split(" ")[2])) {
                             exists = true;
                             if (Util.getNowStr().split(" ")[0].equals(article.getRegDate().split(" ")[0])) {
                                 System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[1], article.getTitle(), article.getBody());
@@ -74,13 +58,37 @@ public class Main {
                                 System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[0], article.getTitle(), article.getBody());
                             }
                         }
-
                     }
                     if (!exists) {
                         System.out.println("해당하는 글 없음");
                     }
                 }
-            }else if (cmd.startsWith("article detail")) {
+            }
+//            else if (cmd.startsWith("article search")) {
+//                System.out.println("==게시글 목록==");
+//                if (articles.size() == 0) {
+//                    System.out.println("아무것도 없음");
+//                } else {
+//                    System.out.println("   번호  /       날짜       /       제목     /   내용  ");
+//                    boolean exists = false;
+//                    for (int i = articles.size() - 1; i >= 0; i--) {
+//                        Article article = articles.get(i);
+//                        if (article.getTitle().contains(cmd.split(" ")[2])) {
+//                            exists = true;
+//                            if (Util.getNowStr().split(" ")[0].equals(article.getRegDate().split(" ")[0])) {
+//                                System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[1], article.getTitle(), article.getBody());
+//                            } else {
+//                                System.out.printf("   %d     /    %s          /    %s     /     %s   \n", article.getId(), article.getRegDate().split(" ")[0], article.getTitle(), article.getBody());
+//                            }
+//                        }
+//
+//                    }
+//                    if (!exists) {
+//                        System.out.println("해당하는 글 없음");
+//                    }
+//                }
+//            }
+            else if (cmd.startsWith("article detail")) {
                 System.out.println("==게시글 상세보기==");
 
                 int id = Integer.parseInt(cmd.split(" ")[2]);
