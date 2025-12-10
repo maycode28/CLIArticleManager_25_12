@@ -12,13 +12,11 @@ public class ArticleController extends Controller {
     private Scanner sc;
     private  List<Article> articles;
     private String cmd;
-    private MemberController memberController;
 
     private int lastArticleId = 3;
 
-    public ArticleController(Scanner sc, MemberController memberController) {
+    public ArticleController(Scanner sc) {
         this.sc = sc;
-        this.memberController = memberController;
         articles = new ArrayList<>();
     }
 
@@ -48,10 +46,7 @@ public class ArticleController extends Controller {
     }
 
     private void doWrite() {
-        if(!memberController.isLogined()){
-            System.out.println("먼저 로그인이 필요합니다. 로그인 해주세요.");
-            return;
-        }
+
         System.out.println("==게시글 작성==");
         int id = lastArticleId + 1;
         System.out.print("제목 : ");
@@ -60,7 +55,7 @@ public class ArticleController extends Controller {
         String body = sc.nextLine().trim();
         String regDate = Util.getNowStr();
         String updateDate = Util.getNowStr();
-        String author = memberController.getLoginedMember().getLoginId();
+        String author = Controller.loginedMember.getLoginId();
 
         Article article = new Article(id, regDate, updateDate, title, body, author);
         articles.add(article);
@@ -126,11 +121,6 @@ public class ArticleController extends Controller {
     }
 
     private void doDelete() {
-        if(!memberController.isLogined()){
-            System.out.println("먼저 로그인이 필요합니다. 로그인 해주세요.");
-            return;
-        }
-
 
         int id = Integer.parseInt(cmd.split(" ")[2]);
 
@@ -140,7 +130,7 @@ public class ArticleController extends Controller {
         if (foundArticle == null) {
             System.out.println("해당 게시글은 없습니다");
             return;
-        } else if(!memberController.getLoginedMember().getLoginId().equals(foundArticle.getAuthor())){
+        } else if(!Controller.loginedMember.getLoginId().equals(foundArticle.getAuthor())){
             System.out.println("게시글의 작성자만 삭제할 수 있습니다.");
             return;
         }
@@ -149,10 +139,7 @@ public class ArticleController extends Controller {
     }
 
     private void doModify() {
-        if(!memberController.isLogined()){
-            System.out.println("먼저 로그인이 필요합니다. 로그인 해주세요.");
-            return;
-        }
+
         System.out.println("==게시글 수정==");
 
         int id = Integer.parseInt(cmd.split(" ")[2]);
@@ -162,7 +149,7 @@ public class ArticleController extends Controller {
         if (foundArticle == null) {
             System.out.println("해당 게시글은 없습니다");
             return;
-        } else if(!memberController.getLoginedMember().getLoginId().equals(foundArticle.getAuthor())){
+        } else if(!Controller.loginedMember.getLoginId().equals(foundArticle.getAuthor())){
             System.out.println("게시글의 작성자만 수정할 수 있습니다.");
             return;
         }

@@ -13,7 +13,7 @@ public class App {
         System.out.println("==프로그램 시작==");
 
         MemberController memberController = new MemberController(sc);
-        ArticleController articleController = new ArticleController(sc,memberController);
+        ArticleController articleController = new ArticleController(sc);
 
         articleController.makeTestData();
         memberController.makeTestData();
@@ -35,12 +35,37 @@ public class App {
 
             String controllerName = cmdBits[0];
 
+
+
             if (cmdBits.length == 1) {
                 System.out.println("명령어 확인 필요");
                 continue;
             }
 
             String actionMethodName = cmdBits[1];
+            String forLoginChecks = controllerName + "/" + actionMethodName;
+
+            switch (forLoginChecks) {
+                case "article/write":
+                case "article/delete":
+                case "article/modify":
+                case "member/logout":
+                    if (Controller.isLogined() == false) {
+                        System.out.println("로그인이 필요해");
+                        continue;
+                    }
+                    break;
+            }
+
+            switch (forLoginChecks) {
+                case "member/login":
+                case "member/join":
+                    if (Controller.isLogined()) {
+                        System.out.println("로그아웃이 필요해");
+                        continue;
+                    }
+                    break;
+            }
 
             if (controllerName.equals("article")) {
                 controller = articleController;
